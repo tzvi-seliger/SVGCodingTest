@@ -4,8 +4,7 @@ An coding exercise that can be used to test developers
 A transportation organization wants to analyze the types of vehicles sold.  
 
      	        2018       2019
-      |     Quantity | Quantity
-Type  |        Sold  |     Sold
+Type | 2018<br> Quantity<br>Sold | 2019<br>Quantity<br>Sold
 ----  |  -------- | --------  
 Bicycle | 200 | 220
 Car	   | 100 |  94
