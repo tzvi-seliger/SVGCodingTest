@@ -19,7 +19,7 @@ namespace SVGProject.Controllers
         public ActionResult<IEnumerable<SalesRecord>> Get()
         {
             List<SalesRecord> salesrecords = new List<SalesRecord>();
-            using (SqlConnection conn = new SqlConnection("Data Source=DESKTOP-B54NHFS; Initial Catalog=VehicleShop; Integrated Security=SSPI"))
+            using (SqlConnection conn = new SqlConnection(@"Data Source=svgtest.cur7afppexfe.us-east-2.rds.amazonaws.com,1433; Initial Catalog=VehicleShop;User ID=admin;Password=easyremember"))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand($"Select * from VehicleSales", conn);
