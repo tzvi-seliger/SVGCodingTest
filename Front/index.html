@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.min.js"></script>
+    <style>
+        .red {
+            fill: red;
+            color: red;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow';
+        }
+
+        .labelfont {
+            color: green;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow';
+            text-align: center;
+        }
+
+        .green {
+            color: green;
+            font-family: cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <ul></ul>
+    <script>
+        let colors = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666']
+        let colorsindex = 0
+
+        function incrementcolors() {
+            let setcurrent = colorsindex
+            if (colorsindex == colors.length - 1) {
+                colorsindex = 0
+            } else {
+                colorsindex += 1
+            }
+            return setcurrent
+        }
+
+        const w = 10000;
+        const h = 500;
+
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        let datayears = []
+        
+        function myfetch() {
+            fetch("https://localhost:44339/api/SalesRecord", {
+                method: 'get',
+                mode: 'cors'
+            }).then(function (response) {
+                response.json().then(function (data) {
+                    console.log(data)
+                    data.forEach(obj => {
+                        var found = false
+                        if (datayears.length < 1) {
+                            datayears.push({
+                                "year": obj.saleDate.substring(0, 4),
+                                "count": 1
+                            })
+                            return
+                        }
+                        datayears.forEach(item => {
+                            if (item.hasOwnProperty("year") && item["year"] == obj.saleDate.substring(0, 4)) {
+                                item.count += 1
+                                found = true
+                                return
+                            }
+                        })
+
+                        if (!found) {
+                            datayears.push({
+                                "year": obj.saleDate.substring(0, 4),
+                                "count": 1
+                            })
+                        }
+                    });
+                    console.log(datayears)
+
+                    svg.selectAll("rect")
+                        .data(datayears)
+                        .enter()
+                        .append("rect")
+                        .text(d => "this is the element " + d.year)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+
+
+                    var texts = svg.selectAll("text")
+                        .data(datayears)
+                        .enter();
+
+                    texts.append("text")
+                        .text(function (d) {
+                            return d.year;
+                        })
+                        .attr("x", (d, i) => i * 50)
+                        .attr("y", (d, i) => (h - 3))
+                        .attr("width", 100)
+                        .attr("height", (d, i) => h)
+                        .attr("class", () => "labelfont")
+
+                    texts.append("text")
+                        .text(function (d) {
+                            return d.count;
+                        })
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => (h - d.count * 10) - 3)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("class", () => "labelfont")
+                })
+            })
+        }
+        myfetch()
+    </script>
+</body>
+
+</html>

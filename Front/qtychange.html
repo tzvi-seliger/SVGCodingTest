@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.min.js"></script>
+    <style>
+        .red {
+            fill: red;
+            color: red;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow';
+        }
+
+        .labelfont {
+            color: green;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow';
+            text-align: center;
+        }
+
+        .green {
+            color: green;
+            font-family: cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        let vehiclesarr = []
+        let colors = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666']
+        let colorsindex = 0
+
+        function incrementcolors() {
+            let setcurrent = colorsindex
+            if (colorsindex == colors.length - 1) {
+                colorsindex = 0
+            } else {
+                colorsindex += 1
+            }
+            return setcurrent
+        }
+
+        const w = 100;
+        const h = 100;
+
+        let arrayTypes = {}
+        let vehicleTypes = []
+        function myfetch() {
+            fetch("https://localhost:44339/api/SalesRecord", {
+                method: 'get',
+                mode: 'cors'
+            }).then(function (response) {
+                response.json().then(function (data) {
+                    console.log(data)
+                    data.forEach(obj => {
+                        let currentYear = obj.saleDate.substring(0, 4)
+                        var found = false
+                        if (vehicleTypes.length < 1) {
+                            vehicleTypes.push({
+                                year: {
+                                    [currentYear]: 1
+                                },
+                                name: obj.vehicleType
+                            })
+                            return
+                        }
+                        vehicleTypes.forEach(item => {
+                            if (item.hasOwnProperty("year") && item["year"].hasOwnProperty(obj.saleDate.substring(0, 4)) && item["name"] == obj.vehicleType) {
+                                item["year"][obj.saleDate.substring(0, 4)] += 1
+                                found = true
+                            } else if (item.hasOwnProperty("year") && !item["year"].hasOwnProperty(obj.saleDate.substring(0, 4)) && item["name"] == obj.vehicleType) {
+                                item["year"][obj.saleDate.substring(0, 4)] = 1
+                                found = true
+                            }
+                        })
+
+                        if (!found) {
+                            vehicleTypes.push({
+                                year: {
+                                    [currentYear]: 1
+                                },
+                                name: obj.vehicleType
+                            })
+                        }
+                    });
+                    console.log(vehicleTypes)
+                    vehicleTypes.forEach(item => {
+                        let vehicles = {}
+                        vehicles.name = item.name
+                        vehicles.years = []
+                        for (year in item.year) {
+                            vehicles["years"].push({
+                                year: year,
+                                count: item.year[year]
+                            })
+                        }
+                        vehiclesarr.push(vehicles)
+                    })
+                    console.log(vehiclesarr)
+
+
+                    d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .selectAll("rect")
+                        .data(vehiclesarr[0].years)
+                        .enter()
+                        .append("rect")
+                        .text((d, i) => "this is the element " + d.count)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+
+                        d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .selectAll("rect")
+                        .data(vehiclesarr[1].years)
+                        .enter()
+                        .append("rect")
+                        .text((d, i) => "this is the element " + d.count)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+
+                        d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .selectAll("rect")
+                        .data(vehiclesarr[2].years)
+                        .enter()
+                        .append("rect")
+                        .text((d, i) => "this is the element " + d.count)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+
+                        d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .selectAll("rect")
+                        .data(vehiclesarr[3].years)
+                        .enter()
+                        .append("rect")
+                        .text((d, i) => "this is the element " + d.count)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+
+                        d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
+                        .selectAll("rect")
+                        .data(vehiclesarr[4].years)
+                        .enter()
+                        .append("rect")
+                        .text((d, i) => "this is the element " + d.count)
+                        .attr("x", (d, i) => i * 26)
+                        .attr("y", (d, i) => h - d.count * 10)
+                        .attr("width", 25)
+                        .attr("height", (d, i) => d.count * 10)
+                        .attr("fill", () => colors[incrementcolors()])
+                })
+            })
+        }
+        myfetch()
+    </script>
+</body>
+
+</html>
